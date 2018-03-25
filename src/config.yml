@@ -1,0 +1,59 @@
+# プラグインプレフィックス
+Prefix: "&7[&cNotGriefing&7] &r"
+
+# BlockPlaceEvent, BlockBreakEvent
+Block:
+
+  # ブロック設置許可を制限
+  # ブロック設置許可権利: not_griefing.setbreak
+  Place: true
+
+  # ブロック破壊許可を制限
+  # ブロック破壊許可権利: not_griefing.blockbreak
+  Break: true
+
+
+# BlockDispenseEvent
+BlockDispense:
+
+  # 水バケツの分注を禁止
+  Water: true
+
+  # 溶岩バケツの分注を禁止
+  Lava: true
+
+  # 透明ポーションの分注を禁止
+  Invisibility: true
+
+
+# PlayerInteractEvent
+Replace:
+
+  # 置き換えタイプ
+  # CANCEL: アイテム使用をキャンセルします
+  # REPLACE: アイテムを置き換えます
+  Type: CANCEL
+
+  # 透明ポーション、火打石と打ち金、水バケツ、溶岩を使った時に置き換えられるアイテム
+  # 透明ポーション使用権利: not_griefing.invpot
+  # 水バケツ使用権利: not_griefing.water
+  # 溶岩バケツ使用権利: not_griefing.lava
+  Item: COOKIE
+
+  # 上記のアイテムを使った時に置き換えられるアイテムの名前
+  Name: "&bCOOKIE!"
+
+
+# PlayerCommandPreprocessEvent
+ShowProcessCommands:
+
+  # プレイヤーが打ったコマンドを OP 持ちに表示させるかどうか
+  # 表示権利: not_griefing.showcmd
+  Toggle: true
+
+  # 表示スタイル
+  # & を使って色コードを使用できます。
+  # %prefix: プラグインプレフィックスに置き換え
+  # %player: 送信したプレイヤー名に置き換え
+  # %command: 送信されたコマンドに置き換え
+  Style: "%prefix&7%player: %command"
