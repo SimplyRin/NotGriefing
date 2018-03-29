@@ -144,8 +144,8 @@ public class Main extends JavaPlugin implements Listener {
 			return;
 		}
 
-		if(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			if(action.equals(Action.RIGHT_CLICK_BLOCK) && itemStack.getType().equals(Material.WATER_BUCKET) || itemStack.getType().equals(Material.LAVA_BUCKET)) {
+		if(action.equals(Action.RIGHT_CLICK_BLOCK)) {
+			if(itemStack.getType().equals(Material.WATER_BUCKET)) {
 				if(player.hasPermission("not_griefing.water")) {
 					return;
 				}
@@ -155,7 +155,19 @@ public class Main extends JavaPlugin implements Listener {
 					plugin.replaceItem(player);
 				}
 			}
+			if(itemStack.getType().equals(Material.LAVA_BUCKET)) {
+				if(player.hasPermission("not_griefing.lava")) {
+					return;
+				}
 
+				event.setCancelled(true);
+				if(plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
+					plugin.replaceItem(player);
+				}
+			}
+		}
+
+		if(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) {
 			if(itemStack.getType().equals(Material.FLINT_AND_STEEL)) {
 				if(player.hasPermission("not_griefing.flint_and_steel")) {
 					return;
