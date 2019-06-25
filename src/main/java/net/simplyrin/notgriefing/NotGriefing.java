@@ -35,8 +35,8 @@ public class NotGriefing extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(new BlockListener(this), this);
 		Bukkit.getPluginCommand("notgriefing").setExecutor(new NotGriefingCommand(plugin));
 
-		getLogger().info(Chat.f("{0}&bSite: https://twitter.com/Sui_pw", settings.getPrefix()));
-		getLogger().info(Chat.f("{0}&bAuthor: Sui, SimplyRin", settings.getPrefix()));
+		Bukkit.getConsoleSender().sendMessage(Chat.f("{0}Site: https://twitter.com/Sui_pw", settings.getPrefix()));
+		Bukkit.getConsoleSender().sendMessage(Chat.f("{0}Author: Sui, SimplyRin", settings.getPrefix()));
 
 		Bukkit.getLogger().info(getName() + " enabled.");
 	}
