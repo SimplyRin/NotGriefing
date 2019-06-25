@@ -1,0 +1,8 @@
+main: net.simplyrin.notgriefing.Main
+name: NotGriefing
+version: 1.1
+authors: [Sui(@Sui_pw),SimplyRin]
+commands:
+  notgriefing:
+    usage: /notgriefing <reload>
+    description: NotGriefing main command.
