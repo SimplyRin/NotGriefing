@@ -1,7 +1,6 @@
 package net.simplyrin.notgriefing;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,14 +18,11 @@ public class NotGriefing extends JavaPlugin implements Listener {
 
 	private static NotGriefing plugin;
 	@Getter
-	private String prefix = Chat.f("&7[&cNotGriefing&7] &r");
+	private ConfigContainer settings = null;
 
 	@Override
 	public void onEnable() {
 		plugin = this;
-
-		getLogger().info(Chat.f("{0}&bSite: https://twitter.com/Sui_pw", prefix));
-		getLogger().info(Chat.f("{0}&bAuthor: Sui, SimplyRin", prefix));
 
 		if (!plugin.getDescription().getAuthors().contains("SimplyRin")) {
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
@@ -34,10 +30,13 @@ public class NotGriefing extends JavaPlugin implements Listener {
 		}
 
 		saveDefaultConfig();
-		prefix = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Prefix"));
+		settings = new ConfigContainer(this);
 
 		getServer().getPluginManager().registerEvents(new BlockListener(this), this);
 		Bukkit.getPluginCommand("notgriefing").setExecutor(new NotGriefingCommand(plugin));
+
+		getLogger().info(Chat.f("{0}&bSite: https://twitter.com/Sui_pw", settings.getPrefix()));
+		getLogger().info(Chat.f("{0}&bAuthor: Sui, SimplyRin", settings.getPrefix()));
 
 		Bukkit.getLogger().info(getName() + " enabled.");
 	}

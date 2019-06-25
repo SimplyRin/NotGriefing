@@ -3,6 +3,7 @@ package net.simplyrin.notgriefing.listeners;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (!player.hasPermission("not_griefing.setbreak")) {
-			if (!plugin.getConfig().getBoolean("Block.Place")) {
+			if (!plugin.getSettings().isLimitPlace()) {
 				return;
 			}
 
@@ -46,7 +47,7 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (!player.hasPermission("not_griefing.blockbreak")) {
-			if (!plugin.getConfig().getBoolean("Block.Break")) {
+			if (!plugin.getSettings().isLimitBreak()) {
 				return;
 			}
 
@@ -58,15 +59,15 @@ public class BlockListener implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		Player sender = event.getPlayer();
 
-		if (!plugin.getConfig().getBoolean("ShowProcessCommands.Toggle")) {
+		if (!plugin.getSettings().isDisplayCommandOP()) {
 			return;
 		}
 
-		for (Player player : plugin.getServer().getOnlinePlayers()) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (player.hasPermission("not_griefing.showcmd")) {
-				String style = plugin.getConfig().getString("ShowProcessCommands.Style");
+				String style = plugin.getSettings().getCmdDisplayStyle();
 
-				style = style.replace("%prefix", plugin.getPrefix());
+				style = style.replace("%prefix", plugin.getSettings().getPrefix());
 				style = style.replace("%player", sender.getName());
 				style = style.replace("%command", event.getMessage());
 				style = ChatColor.translateAlternateColorCodes('&', style);
@@ -81,7 +82,7 @@ public class BlockListener implements Listener {
 		ItemStack itemStack = event.getItem();
 
 		if (itemStack.getType().equals(Material.WATER_BUCKET)) {
-			if (!plugin.getConfig().getBoolean("BlockDispense.Water")) {
+			if (!plugin.getSettings().isLimitDispenseWater()) {
 				return;
 			}
 
@@ -89,7 +90,7 @@ public class BlockListener implements Listener {
 		}
 
 		if (itemStack.getType().equals(Material.LAVA_BUCKET)) {
-			if (!plugin.getConfig().getBoolean("BlockDispense.Lava")) {
+			if (!plugin.getSettings().isLimitDispenseLava()) {
 				return;
 			}
 
@@ -108,7 +109,7 @@ public class BlockListener implements Listener {
 				return;
 			}
 
-			if (!plugin.getConfig().getBoolean("BlockDispense.Invisibility")) {
+			if (!plugin.getSettings().isLimitInvisiblePotion()) {
 				return;
 			}
 
@@ -134,7 +135,7 @@ public class BlockListener implements Listener {
 				}
 
 				event.setCancelled(true);
-				if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
+				if (plugin.getSettings().getReplaceType().equals("REPLACE")) {
 					replaceItem(player);
 				}
 			}
@@ -144,7 +145,7 @@ public class BlockListener implements Listener {
 				}
 
 				event.setCancelled(true);
-				if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
+				if (plugin.getSettings().getReplaceType().equals("REPLACE")) {
 					replaceItem(player);
 				}
 			}
@@ -157,7 +158,7 @@ public class BlockListener implements Listener {
 				}
 
 				event.setCancelled(true);
-				if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
+				if (plugin.getSettings().getReplaceType().equals("REPLACE")) {
 					replaceItem(player);
 				}
 			}
@@ -176,7 +177,7 @@ public class BlockListener implements Listener {
 
 				if (types.contains(PotionEffectType.INVISIBILITY)) {
 					event.setCancelled(true);
-					if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
+					if (plugin.getSettings().getReplaceType().equals("REPLACE")) {
 						replaceItem(player);
 					}
 				}
@@ -186,11 +187,10 @@ public class BlockListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	public void replaceItem(Player player) {
-		String replaceItem = plugin.getConfig().getString("Replace.Item");
-		ItemStack itemStack = new ItemStack(Material.matchMaterial(replaceItem));
+		ItemStack itemStack = new ItemStack(plugin.getSettings().getConvertMaterial());
 		ItemMeta itemMeta = itemStack.getItemMeta();
 		itemMeta.setDisplayName(
-				ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Replace.Name")));
+				ChatColor.translateAlternateColorCodes('&', plugin.getSettings().getConvertMaterialMessage()));
 		itemStack.setItemMeta(itemMeta);
 		player.getInventory().setItemInHand(itemStack);
 		player.updateInventory();
