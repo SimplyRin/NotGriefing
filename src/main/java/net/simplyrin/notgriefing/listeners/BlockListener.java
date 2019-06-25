@@ -1,4 +1,7 @@
-package net.simplyrin.notgriefing;
+package net.simplyrin.notgriefing.listeners;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,43 +16,17 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.Potion;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import lombok.Getter;
-import net.simplyrin.notgriefing.commands.NotGriefing;
+import lombok.RequiredArgsConstructor;
+import net.simplyrin.notgriefing.NotGriefing;
 
-/**
- * Created by SimplyRin on 2018/03/24
- */
-public class Main extends JavaPlugin implements Listener {
+@RequiredArgsConstructor
+public class BlockListener implements Listener {
 
-	private static Main plugin;
-	@Getter
-	private String prefix = "§7[§cNotGriefing§7] §r";
-
-	@Override
-	public void onEnable() {
-		plugin = this;
-		plugin.getServer().getConsoleSender().sendMessage(plugin.getPrefix() + "§bSite: https://twitter.com/Sui_pw");
-		plugin.getServer().getConsoleSender().sendMessage(plugin.getPrefix() + "§bAuthor: Sui, SimplyRin");
-		if (!plugin.getDescription().getAuthors().contains("SimplyRin")) {
-			plugin.getServer().getPluginManager().disablePlugin(plugin);
-			return;
-		}
-
-		plugin.saveDefaultConfig();
-		plugin.prefix = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Prefix"));
-
-		plugin.getServer().getPluginManager().registerEvents(plugin, plugin);
-		plugin.getCommand("notgriefing").setExecutor(new NotGriefing(plugin));
-	}
-
-	@Override
-	public void onDisable() {
-		plugin = null;
-	}
+	private final NotGriefing plugin;
 
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
@@ -89,7 +66,7 @@ public class Main extends JavaPlugin implements Listener {
 			if (player.hasPermission("not_griefing.showcmd")) {
 				String style = plugin.getConfig().getString("ShowProcessCommands.Style");
 
-				style = style.replace("%prefix", this.getPrefix());
+				style = style.replace("%prefix", plugin.getPrefix());
 				style = style.replace("%player", sender.getName());
 				style = style.replace("%command", event.getMessage());
 				style = ChatColor.translateAlternateColorCodes('&', style);
@@ -120,9 +97,14 @@ public class Main extends JavaPlugin implements Listener {
 		}
 
 		if (itemStack.getType().equals(Material.POTION)) {
-			Potion potion = Potion.fromItemStack(itemStack);
+			PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+			List<PotionEffect> effects = meta.getCustomEffects();
 
-			if (!potion.getType().getEffectType().equals(PotionEffectType.INVISIBILITY)) {
+			List<PotionEffectType> types = effects.stream()
+					.map(PotionEffect::getType)
+					.collect(Collectors.toList());
+
+			if (!types.contains(PotionEffectType.INVISIBILITY)) {
 				return;
 			}
 
@@ -138,6 +120,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onInteract(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
+		@SuppressWarnings("deprecation")
 		ItemStack itemStack = player.getItemInHand();
 
 		if (itemStack == null) {
@@ -152,7 +135,7 @@ public class Main extends JavaPlugin implements Listener {
 
 				event.setCancelled(true);
 				if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
-					plugin.replaceItem(player);
+					replaceItem(player);
 				}
 			}
 			if (itemStack.getType().equals(Material.LAVA_BUCKET)) {
@@ -162,7 +145,7 @@ public class Main extends JavaPlugin implements Listener {
 
 				event.setCancelled(true);
 				if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
-					plugin.replaceItem(player);
+					replaceItem(player);
 				}
 			}
 		}
@@ -175,7 +158,7 @@ public class Main extends JavaPlugin implements Listener {
 
 				event.setCancelled(true);
 				if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
-					plugin.replaceItem(player);
+					replaceItem(player);
 				}
 			}
 
@@ -184,18 +167,24 @@ public class Main extends JavaPlugin implements Listener {
 					return;
 				}
 
-				Potion potion = Potion.fromItemStack(itemStack);
+				PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+				List<PotionEffect> effects = meta.getCustomEffects();
 
-				if (potion.getType().getEffectType().equals(PotionEffectType.INVISIBILITY)) {
+				List<PotionEffectType> types = effects.stream()
+						.map(PotionEffect::getType)
+						.collect(Collectors.toList());
+
+				if (types.contains(PotionEffectType.INVISIBILITY)) {
 					event.setCancelled(true);
 					if (plugin.getConfig().getString("Replace.Type").equals("REPLACE")) {
-						plugin.replaceItem(player);
+						replaceItem(player);
 					}
 				}
 			}
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void replaceItem(Player player) {
 		String replaceItem = plugin.getConfig().getString("Replace.Item");
 		ItemStack itemStack = new ItemStack(Material.matchMaterial(replaceItem));
@@ -203,8 +192,7 @@ public class Main extends JavaPlugin implements Listener {
 		itemMeta.setDisplayName(
 				ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Replace.Name")));
 		itemStack.setItemMeta(itemMeta);
-		player.getPlayer().setItemInHand(itemStack);
+		player.getInventory().setItemInHand(itemStack);
 		player.updateInventory();
 	}
-
 }

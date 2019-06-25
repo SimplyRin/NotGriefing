@@ -4,16 +4,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import net.simplyrin.notgriefing.Main;
+import net.simplyrin.notgriefing.NotGriefing;
 
 /**
  * Created by SimplyRin on 2018/03/25
  */
-public class NotGriefing implements CommandExecutor {
+public class NotGriefingCommand implements CommandExecutor {
 
-	private Main plugin;
+	private NotGriefing plugin;
 
-	public NotGriefing(Main plugin) {
+	public NotGriefingCommand(NotGriefing plugin) {
 		this.plugin = plugin;
 	}
 
