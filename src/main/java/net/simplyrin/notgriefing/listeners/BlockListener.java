@@ -1,5 +1,6 @@
 package net.simplyrin.notgriefing.listeners;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import lombok.RequiredArgsConstructor;
 import net.simplyrin.notgriefing.NotGriefing;
@@ -79,7 +81,7 @@ public class BlockListener implements Listener {
 
 	@EventHandler
 	public void onBlockDispense(BlockDispenseEvent event) {
-		ItemStack itemStack = event.getItem();
+		ItemStack item = event.getItem();
 
 		if (itemStack.getType().equals(Material.WATER_BUCKET)) {
 			if (!plugin.getSettings().isLimitDispenseWater()) {
@@ -97,15 +99,9 @@ public class BlockListener implements Listener {
 			event.setCancelled(true);
 		}
 
-		if (itemStack.getType().equals(Material.POTION)) {
-			PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
-			List<PotionEffect> effects = meta.getCustomEffects();
+		if (item.getType().toString().endsWith("POTION")) {
 
-			List<PotionEffectType> types = effects.stream()
-					.map(PotionEffect::getType)
-					.collect(Collectors.toList());
-
-			if (!types.contains(PotionEffectType.INVISIBILITY)) {
+			if (!containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
 				return;
 			}
 
@@ -114,6 +110,7 @@ public class BlockListener implements Listener {
 			}
 
 			event.setCancelled(true);
+			return;
 		}
 	}
 
@@ -163,23 +160,19 @@ public class BlockListener implements Listener {
 				}
 			}
 
-			if (itemStack.getType().equals(Material.POTION)) {
+			if (item.getType().toString().endsWith("POTION")) {
 				if (player.hasPermission("not_griefing.invpot")) {
 					return;
 				}
 
-				PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
-				List<PotionEffect> effects = meta.getCustomEffects();
+				if (!containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
+					return;
+				}
 
-				List<PotionEffectType> types = effects.stream()
-						.map(PotionEffect::getType)
-						.collect(Collectors.toList());
+				event.setCancelled(true);
 
-				if (types.contains(PotionEffectType.INVISIBILITY)) {
-					event.setCancelled(true);
-					if (plugin.getSettings().getReplaceType().equals("REPLACE")) {
-						replaceItem(player);
-					}
+				if (plugin.getSettings().getReplaceType().equals("REPLACE")) {
+					replaceItem(player);
 				}
 			}
 		}
@@ -194,5 +187,30 @@ public class BlockListener implements Listener {
 		itemStack.setItemMeta(itemMeta);
 		player.getInventory().setItemInHand(itemStack);
 		player.updateInventory();
+	}
+
+	private boolean containsAnyPotionEffectType(ItemStack potion, PotionEffectType... types) {
+
+		if (types.length <= 0) {
+			return false;
+		}
+
+		PotionMeta meta = (PotionMeta) potion.getItemMeta();
+		List<PotionEffect> effects = meta.getCustomEffects();
+
+		List<PotionEffectType> potionTypes = effects.stream()
+				.map(PotionEffect::getType)
+				.collect(Collectors.toList());
+
+		PotionType baseType = meta.getBasePotionData().getType();
+		potionTypes.add(baseType.getEffectType());
+
+		for (PotionEffectType targetType : types) {
+			if (potionTypes.contains(targetType)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
