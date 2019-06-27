@@ -96,7 +96,7 @@ public class BlockListener implements Listener {
 
 		if (item.getType().toString().endsWith("POTION")) {
 
-			if (plugin.getVersionUtils().containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
+			if (!plugin.getVersionUtils().containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
 				return;
 			}
 
@@ -159,7 +159,7 @@ public class BlockListener implements Listener {
 					return;
 				}
 
-				if (plugin.getVersionUtils().containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
+				if (!plugin.getVersionUtils().containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
 					return;
 				}
 
