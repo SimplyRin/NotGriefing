@@ -95,12 +95,13 @@ public class BlockListener implements Listener {
 			return;
 		}
 
-		if (itemStack.getType().equals(Material.LAVA_BUCKET)) {
+		if (item.getType().equals(Material.LAVA_BUCKET)) {
 			if (!plugin.getSettings().isLimitDispenseLava()) {
 				return;
 			}
 
 			event.setCancelled(true);
+			return;
 		}
 
 		if (item.getType().toString().endsWith("POTION")) {
@@ -123,9 +124,9 @@ public class BlockListener implements Listener {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		@SuppressWarnings("deprecation")
-		ItemStack itemStack = player.getItemInHand();
+		ItemStack item = player.getItemInHand();
 
-		if (itemStack == null) {
+		if (item == null) {
 			return;
 		}
 
@@ -140,7 +141,7 @@ public class BlockListener implements Listener {
 					replaceItem(player);
 				}
 			}
-			if (itemStack.getType().equals(Material.LAVA_BUCKET)) {
+			if (item.getType().equals(Material.LAVA_BUCKET)) {
 				if (player.hasPermission("not_griefing.lava")) {
 					return;
 				}
@@ -153,7 +154,7 @@ public class BlockListener implements Listener {
 		}
 
 		if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (itemStack.getType().equals(Material.FLINT_AND_STEEL)) {
+			if (item.getType().equals(Material.FLINT_AND_STEEL)) {
 				if (player.hasPermission("not_griefing.flint_and_steel")) {
 					return;
 				}
