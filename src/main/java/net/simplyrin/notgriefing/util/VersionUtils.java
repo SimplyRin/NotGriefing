@@ -62,6 +62,10 @@ public class VersionUtils {
 
 	public boolean containsAnyPotionEffectType(ItemStack potion, PotionEffectType... types) {
 
+		if (!potion.getType().toString().endsWith("POTION")) {
+			return false;
+		}
+
 		if (types.length <= 0) {
 			return false;
 		}
