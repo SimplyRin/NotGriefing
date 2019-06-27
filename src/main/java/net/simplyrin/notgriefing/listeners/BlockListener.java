@@ -31,6 +31,9 @@ public class BlockListener implements Listener {
 
 	private final NotGriefing plugin;
 
+	private List<Material> waterBuckets = Arrays.asList(Material.COD_BUCKET, Material.PUFFERFISH_BUCKET,
+			Material.SALMON_BUCKET, Material.TROPICAL_FISH_BUCKET, Material.WATER_BUCKET);
+
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
@@ -83,12 +86,13 @@ public class BlockListener implements Listener {
 	public void onBlockDispense(BlockDispenseEvent event) {
 		ItemStack item = event.getItem();
 
-		if (itemStack.getType().equals(Material.WATER_BUCKET)) {
+		if (waterBuckets.contains(item.getType())) {
 			if (!plugin.getSettings().isLimitDispenseWater()) {
 				return;
 			}
 
 			event.setCancelled(true);
+			return;
 		}
 
 		if (itemStack.getType().equals(Material.LAVA_BUCKET)) {
@@ -126,7 +130,7 @@ public class BlockListener implements Listener {
 		}
 
 		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (itemStack.getType().equals(Material.WATER_BUCKET)) {
+			if (waterBuckets.contains(item.getType())) {
 				if (player.hasPermission("not_griefing.water")) {
 					return;
 				}
