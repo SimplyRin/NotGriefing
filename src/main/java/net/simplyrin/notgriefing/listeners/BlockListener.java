@@ -1,9 +1,5 @@
 package net.simplyrin.notgriefing.listeners;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,10 +14,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 import lombok.RequiredArgsConstructor;
 import net.simplyrin.notgriefing.NotGriefing;
@@ -30,9 +23,6 @@ import net.simplyrin.notgriefing.NotGriefing;
 public class BlockListener implements Listener {
 
 	private final NotGriefing plugin;
-
-	private List<Material> waterBuckets = Arrays.asList(Material.COD_BUCKET, Material.PUFFERFISH_BUCKET,
-			Material.SALMON_BUCKET, Material.TROPICAL_FISH_BUCKET, Material.WATER_BUCKET);
 
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
@@ -86,7 +76,7 @@ public class BlockListener implements Listener {
 	public void onBlockDispense(BlockDispenseEvent event) {
 		ItemStack item = event.getItem();
 
-		if (waterBuckets.contains(item.getType())) {
+		if (plugin.getVersionUtils().getWaterBuckets().contains(item.getType())) {
 			if (!plugin.getSettings().isLimitDispenseWater()) {
 				return;
 			}
@@ -106,7 +96,7 @@ public class BlockListener implements Listener {
 
 		if (item.getType().toString().endsWith("POTION")) {
 
-			if (!containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
+			if (plugin.getVersionUtils().containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
 				return;
 			}
 
@@ -123,15 +113,14 @@ public class BlockListener implements Listener {
 	public void onInteract(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
-		@SuppressWarnings("deprecation")
-		ItemStack item = player.getItemInHand();
+		ItemStack item = plugin.getVersionUtils().getItemInMainHand(player);
 
 		if (item == null) {
 			return;
 		}
 
 		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (waterBuckets.contains(item.getType())) {
+			if (plugin.getVersionUtils().getWaterBuckets().contains(item.getType())) {
 				if (player.hasPermission("not_griefing.water")) {
 					return;
 				}
@@ -170,7 +159,7 @@ public class BlockListener implements Listener {
 					return;
 				}
 
-				if (!containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
+				if (plugin.getVersionUtils().containsAnyPotionEffectType(item, PotionEffectType.INVISIBILITY)) {
 					return;
 				}
 
@@ -183,39 +172,13 @@ public class BlockListener implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void replaceItem(Player player) {
 		ItemStack itemStack = new ItemStack(plugin.getSettings().getConvertMaterial());
 		ItemMeta itemMeta = itemStack.getItemMeta();
 		itemMeta.setDisplayName(
 				ChatColor.translateAlternateColorCodes('&', plugin.getSettings().getConvertMaterialMessage()));
 		itemStack.setItemMeta(itemMeta);
-		player.getInventory().setItemInHand(itemStack);
+		plugin.getVersionUtils().setItemInMainHand(player, itemStack);
 		player.updateInventory();
-	}
-
-	private boolean containsAnyPotionEffectType(ItemStack potion, PotionEffectType... types) {
-
-		if (types.length <= 0) {
-			return false;
-		}
-
-		PotionMeta meta = (PotionMeta) potion.getItemMeta();
-		List<PotionEffect> effects = meta.getCustomEffects();
-
-		List<PotionEffectType> potionTypes = effects.stream()
-				.map(PotionEffect::getType)
-				.collect(Collectors.toList());
-
-		PotionType baseType = meta.getBasePotionData().getType();
-		potionTypes.add(baseType.getEffectType());
-
-		for (PotionEffectType targetType : types) {
-			if (potionTypes.contains(targetType)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

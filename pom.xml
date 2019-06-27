@@ -66,10 +66,6 @@
 			<id>rayzr-repo</id>
 			<url>https://cdn.rawgit.com/Rayzr522/maven-repo/master/</url>
 		</repository>
-		<repository>
-			<id>sk89q-repo</id>
-			<url>https://maven.sk89q.com/repo/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
