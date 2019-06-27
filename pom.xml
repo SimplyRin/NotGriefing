@@ -9,9 +9,9 @@
 
 	<name>${project.artifactId}</name>
 	<description>Prevent grief plugin</description>
-	<url>https://azisaba.net</url>
+	<url>https://github.com/SimplyRin</url>
 	<organization>
-		<name>siloneco</name>
+		<name>SimplyRin</name>
 		<url>https://github.com/${project.organization.name}/${project.name}</url>
 	</organization>
 
@@ -38,22 +38,6 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<minimizeJar>true</minimizeJar>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -62,10 +46,6 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
-		<repository>
-			<id>rayzr-repo</id>
-			<url>https://cdn.rawgit.com/Rayzr522/maven-repo/master/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -73,13 +53,11 @@
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
 			<version>1.14.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.8</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

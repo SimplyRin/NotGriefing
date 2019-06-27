@@ -1,7 +1,9 @@
+name: ${project.name}
 main: net.simplyrin.notgriefing.NotGriefing
-name: NotGriefing
-version: 1.3.0
+version: ${project.version}
 authors: [Sui(@Sui_pw),SimplyRin]
+description: ${project.description}
+website: ${project.url}
 api-version: 1.14
 commands:
   notgriefing:
