@@ -1,7 +1,7 @@
 # NotGriefing
 オリジナル製作者の [minecraft-jp.pw](https://minecraft-jp.pw/) 様に許可を得てリメイクしているプラグインです。
 
-[siloneco](https://twitter.com/siloneco_MC) さんが 1.14.x 上で発生するバグなどを修正したものを [siloneco/NotGriefing](https://github.com/siloneco/NotGriefing) にて公開されています。
+[siloneco](https://twitter.com/siloneco_MC) さんが 1.14.x 上で発生するバグなどを修正したものを [siloneco/NotGriefing/Releases](https://github.com/siloneco/NotGriefing) にて公開されています。
 
 1.14.x 向け対応ビルドが欲しい方は検討してみてください。
 
