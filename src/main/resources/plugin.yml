@@ -1,0 +1,11 @@
+name: ${project.name}
+main: net.simplyrin.notgriefing.NotGriefing
+version: ${project.version}
+authors: [Sui(@Sui_pw),SimplyRin]
+description: ${project.description}
+website: ${project.url}
+api-version: 1.14
+commands:
+  notgriefing:
+    usage: /notgriefing <reload>
+    description: NotGriefing main command.
